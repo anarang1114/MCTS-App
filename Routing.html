@@ -1,0 +1,47 @@
+<html>
+
+<head> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />   
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>
+
+   
+ 
+ 
+ <link rel="stylesheet" href="leaflet-routing-machine.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+<title>Leaflet Routing Machine Example</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <h1 id = h1> MCTS Best Route </h1>
+</head>
+<body>
+	<img src="Milwaukee_County_Transit_System_Logo-a.jpg" alt="MCTS Logo">
+
+<form id = "startend">
+Start Address: <input text = startaddress id="start" name=startaddress required><br>
+End Address: <input text = endaddress id="end" name=endaddress required><br>
+Longitude and Latitude for Start Address: <input text = Longitude id="longistart" name=longi required><br>
+Longitude and Latitude for End Address: <input text = Latitude id="latiend" name=lati required><br>
+</form>
+<button id="RemovePopup"> Remove All Addresses </button>
+<button id="Findbest"> Find Best Route </button>
+    <div id="map" class="map"></div>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="leaflet-routing-machine.js"></script>
+	<script src="Control.Geocoder.js"></script>
+	 <script src="config.js"></script>
+	<script src="index.js">
+	
+	</script>
+</body>
+
+
+
+
+
+
+</html>

@@ -1,0 +1,44 @@
+body { 
+margin:0; 
+padding:0; 
+}
+#map { 
+position: absolute;
+margin-top:40px; 
+width: 1000px; 
+height: 500px; 
+
+top:45px;  }
+#RemovePopup{ 
+margin-top:-10px;
+margin-left: 100px;
+background-color:red;
+border-radius: 5px;
+font-size: 20px;
+color:white;
+}
+#startend{
+	margin-top:510px;
+	margin-left:50px;
+	
+	
+}
+#h1{
+	font-family: Arial;
+	margin-left:700px;
+	background-color:green;
+	color:	rgb(255, 255, 255);
+	height:50px;
+	
+}
+#Findbest{
+	margin-left: 40px;
+	background-color:green;
+	border-radius: 5px;
+	font-size: 20px;
+	color:white
+}
+img{
+	margin-top:-100px;
+	margin-left:0px;
+}
