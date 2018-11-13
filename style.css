@@ -1,17 +1,20 @@
 body { 
 margin:0; 
 padding:0; 
+
 }
 #map { 
 position: absolute;
 margin-top:40px; 
 width: 1000px; 
 height: 500px; 
-
+margin-top:80px;
 top:45px;  }
-#RemovePopup{ 
-margin-top:-10px;
-margin-left: 100px;
+#RemoveAddress{ 
+position: absolute;
+margin-top:500px;
+margin-left:580px;
+
 background-color:red;
 border-radius: 5px;
 font-size: 20px;
@@ -19,11 +22,9 @@ color:white;
 }
 #startend{
 	margin-top:510px;
-	margin-left:50px;
-	
-	
-}
+	}
 #h1{
+
 	font-family: Arial;
 	margin-left:700px;
 	background-color:green;
@@ -31,14 +32,50 @@ color:white;
 	height:50px;
 	
 }
-#Findbest{
-	margin-left: 40px;
+#getbestroute{	
+position: absolute;
+margin-top:500px;
+margin-left:410px;
+
+	
 	background-color:green;
 	border-radius: 5px;
 	font-size: 20px;
 	color:white
 }
 img{
-	margin-top:-100px;
+	margin-top:-70px;
 	margin-left:0px;
+}
+#getlocation{
+	position: absolute;
+margin-top:500px;
+margin-left:10px;
+background-color:black;
+border-radius: 5px;
+font-size: 20px;
+color:white;
+	
+}
+#ShowMilwaukeeMap{
+	position: absolute;
+	margin-top:500px;
+margin-left:180px;
+background-color:blue;
+border-radius: 5px;
+font-size: 20px;
+color:white;
+}
+#results{
+	position:absolute;
+	margin-left:1050px;
+	margin-top: 100px;
+	
+}
+#instructions{
+	margin-left:1050px;
+	margin-top:-70px;
+	
+	
+	
 }
