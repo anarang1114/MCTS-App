@@ -1,20 +1,26 @@
 body { 
+margin:0; 
+padding:0; 
 	margin:0; 
 	padding:0; 
-
-}
-#map { 
-	position: absolute;
-	margin-top:40px; 
-	width: 1000px; 
-	height: 500px; 
-	margin-top:80px;
-	top:45px;
-
  }
+#map { 
+position: absolute;
+width: 1000px; 
+height: 500px; 
+
+top:130px;  
+position: absolute;
+	
+	
+	
+	
+  }
 #RemoveAddress{ 
+
+
 	position: absolute;
-	margin-top:500px;
+	margin-top:530px;
 	margin-left:665px;
 	padding: 24px 6px;
 	background-color:red;
@@ -25,16 +31,13 @@ body {
 	transition-duration: 0.4s;
 	border: 3px solid firebrick;
 }
-
-#RemoveAddress:hover {
-    opacity: 0.6;
-
-}
+ 
 #startend{
 	margin-top:510px;
 	}
 #h1{
-	font-family: Arial;
+ 	font-family: Arial;
+	margin-left:700px;
 	margin-left:537px;
 	padding: 2px;
 	background-color:green;
@@ -43,34 +46,37 @@ body {
 	height:50px;
 	
 }
+#RemoveAddress:hover {
+opacity: 0.6;}
 #getbestroute{	
 	position: absolute;
-	margin-top:500px;
+	margin-top:530px;
 	margin-left:475px;
 	padding: 24px 6px;
 	background-color:green;
 	border-radius: 16px;
 	font-size: 20px;
+	color:white;
 	font-family: Arial Black;
 	color:white;
 	transition-duration: 0.4s;
 	border: 3px solid darkgreen;
 }
-
-
-#getbestroute:hover {
+ #getbestroute:hover {
     opacity: 0.6;
-
-}
+ }
 img{
 	margin-top:-70px;
 	margin-left:0px;
 }
 #getlocation{
 	position: absolute;
-	margin-top:500px;
+	background-color:black;
+	color:white;
+	
+	margin-top:530px;
 	margin-left:10px;
-	background-color:orange;
+	
 	border-radius: 16px;
 	padding: 24px 6px;
 	font-size: 20px;
@@ -78,35 +84,35 @@ img{
 	color:white;
 	transition-duration: 0.4s;
 	border: 3px solid darkorange;
-
-}
-
-#getLocation:hover {
+ }
+ #getLocation:hover {
     opacity: 0.6;
-
-}
-
-#ShowMilwaukeeMap{
+ }
+ #ShowMilwaukeeMap{
 	position: absolute;
-	margin-top:500px;
+	margin-top:530px;
+	
+
+
+	font-size: 20px;
+
 	margin-left:214px;
 	padding: 24px 6px;
 	background-color:blue;
 	border-radius: 16px;
-	font-size: 20px;
+	
 	font-family: Arial Black;
 	color:white;
 	transition-duration: 0.4s;
 	border: 3px solid darkblue;
 }
-
-#ShowMilwaukeeMap:hover {
+ #ShowMilwaukeeMap:hover {
     opacity: 0.6;
-
-}
+ }
 #results{
 	position:absolute;
 	margin-left:1050px;
+	
 	margin-top: 10px;
 	padding: 4px;
 	font-family: Trebuchet MS;
@@ -121,15 +127,26 @@ img{
 	display:flex;
 	font-family: Trebuchet MS;
 	font-weight: bold;
-	font-size: 20px;
+	font-size: 15px;
 	color: white;
 	background-color:green;
 	border: 3px solid green;
 	padding: 4px;
 	border-radius: 16px;
 	margin-left:1050px;
-	margin-top:-70px;
-	
-	
-	
+margin-top:0px;}
+#Flipinstructions{
+	display:flex;
+	font-family: Trebuchet MS;
+	font-weight: bold;
+	font-size: 18px;
+	color: white;
+	background-color:green;
+	border: 3px solid green;
+	padding: 4px;
+	border-radius: 16px;
+	margin-left:1050px;
+	margin-top:-50px;
 }
+
+	
