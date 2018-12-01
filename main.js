@@ -5,11 +5,12 @@ startlng=0;
 endlat= 0;
 endlng=0;
 startaddressdefined = false;
-
+endaddressdefined=false;
+startend = new Array();
 $(document).ready(function(){
 	$('#Flipinstructions').click(function(){
-						$('#instructions').slideToggle('slow');
-						 });
+		$('#instructions').slideToggle('slow');
+	});
 
 });
 
@@ -30,11 +31,14 @@ function setup(){
 
 
 function findmylocation(){
-
+	$("#startlocation").html("Start Location: Your location");
+	$("#startlocation").css("border-radius", "8px");
+	$("#startlocation").css("backgroundColor","green");
+	$("#startlocation").css("color","white");
+	$("#startlocation").css("font-size","18px");
+	
 	$("<div/>").attr('id','map').appendTo('body');
-	var popup = L.popup(),
-	geocode,
-	map;
+	var popup = L.popup(),geocode,map;
 
 var geolocationMap = L.map('map', {
     layers: MQ.mapLayer(),
@@ -44,7 +48,7 @@ var geolocationMap = L.map('map', {
     popup.setLatLng(e.latlng).openOn(this);
 
   geocode.reverse(e.latlng);
-
+	
 geocode.reverse(e.latlng);
 
 var latlnglength = (e.latlng).toString().length;
@@ -56,6 +60,11 @@ var latlnglength = (e.latlng).toString().length;
 });
   	geocode = MQ.geocode().on('success', function(e) {
   popup.setContent(geocode.describeLocation(e.result.best));
+  $("#endlocation").html("End Location: "+(geocode.describeLocation(e.result.best)));
+  $("#endlocation").css("border-radius", "8px");
+	$("#endlocation").css("backgroundColor","red");
+	$("#endlocation").css("color","white");
+	$("#endlocation").css("font-size","18px");
 });
 
 if (navigator.geolocation) {
@@ -81,7 +90,7 @@ if (navigator.geolocation) {
     });
 
 } else {
-    //No browser support geolocation service
+    
     geolocationErrorOccurred(false, popup, geolocationMap.getCenter());
 }
 
@@ -97,6 +106,7 @@ function geolocationErrorOccurred(geolocationSupported, popup, latLng) {
 
 
 function setmilwuakeemap(){
+	
 $("<div/>").attr('id','map').appendTo('body');
 var popup = L.popup(),
   geocode,
@@ -109,33 +119,59 @@ map = L.map('map', {
   .on('click', function(e) {
     popup.setLatLng(e.latlng).openOn(this);
 
-  geocode.reverse(e.latlng);
+	geocode.reverse(e.latlng);
 
-  if(!startaddressdefined){
-  var latlnglength = (e.latlng).toString().length;
+	if(!startaddressdefined){
+		var latlnglength = (e.latlng).toString().length;
 
-  startlat = Number((e.latlng).toString().substring(7,latlnglength-1).split(",",1));
+		
+		startlat = Number((e.latlng).toString().substring(7,latlnglength-1).split(",",1));
 
-  startlng = Number(e.latlng.toString().substring(startlat.toString().length+9, latlnglength-1));
-  startaddressdefined=true;
-  }
-  else{
-	  var latlnglength = (e.latlng).toString().length;
+  
+		startlng = Number(e.latlng.toString().substring(startlat.toString().length+9, latlnglength-1));
+  
+		startaddressdefined=true;
+  
+	}
+  
+	else{
+		var latlnglength = (e.latlng).toString().length;
 
-  endlat = Number((e.latlng).toString().substring(7,latlnglength-1).split(",",1));
+		endlat = Number((e.latlng).toString().substring(7,latlnglength-1).split(",",1));
 
-  endlng = Number(e.latlng.toString().substring(endlat.toString().length+9, latlnglength-1));
-  //alert("Start latlng"+ startlat + " "+startlng+ "and End latlng" + endlat + " "+ endlng);
-  }
+		endlng = Number(e.latlng.toString().substring(endlat.toString().length+9, latlnglength-1));
+  
+	}
 
-});
+
+	});
 
 geocode = MQ.geocode().on('success', function(e) {
   popup.setContent(geocode.describeLocation(e.result.best));
+	startend.push(geocode.describeLocation(e.result.best));
+	placeaddress();
 });
 
-
 }
+function placeaddress(){
+	if(!endaddressdefined){
+	$("#startlocation").html("Start Location: "+ startend.pop());
+	$("#startlocation").css("border-radius", "8px");
+	$("#startlocation").css("backgroundColor","green");
+	$("#startlocation").css("color","white");
+	$("#startlocation").css("font-size","18px");
+	endaddressdefined=true;
+	}
+	else{
+		$("#endlocation").html("End Location: "+ startend.pop());
+		$("#endlocation").css("border-radius", "8px");
+		$("#endlocation").css("backgroundColor","red");
+		$("#endlocation").css("color","white");
+		$("#endlocation").css("font-size","18px");
+		
+	}
+}
+
 function clearaddressstartend(){
 	var mymap = document.getElementById("map");
 	mymap.parentNode.removeChild(mymap);
@@ -146,6 +182,12 @@ function clearaddressstartend(){
 	endlng =0;
 	startaddressdefined = false;
 	document.getElementById("results").innerHTML = "";
+	$("#startlocation").html("");
+	$("#endlocation").html("");
+	$("#results").css("border-radius", "0px");
+	$("#results").css("border","0px solid green");
+	endaddressdefined=false;
+	
 }
 
 
@@ -201,15 +243,6 @@ map.addLayer(MQ.routing.routeLayer({
     fitBounds: true
 }));
 	}
-	//L.marker([43.175789945929,-87.919274999999]).addTo(map)
-	/*
-	var map = L.map('map', {
-                layers: MQ.mapLayer()
-            });
-	 L.marker([ startlat, startlng])
-    .addTo(map)
-    .bindPopup('yo')
-    .openPopup()
-	*/
-
+$("#results").css("border-radius", "16px");
+$("#results").css("border","3px solid green");
 }

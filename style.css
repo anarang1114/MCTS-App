@@ -8,17 +8,10 @@ padding:0;
 position: absolute;
 width: 1000px; 
 height: 500px; 
-
 top:130px;  
 position: absolute;
-	
-	
-	
-	
-  }
+}
 #RemoveAddress{ 
-
-
 	position: absolute;
 	margin-top:530px;
 	margin-left:665px;
@@ -91,16 +84,11 @@ img{
  #ShowMilwaukeeMap{
 	position: absolute;
 	margin-top:530px;
-	
-
-
 	font-size: 20px;
-
 	margin-left:214px;
 	padding: 24px 6px;
 	background-color:blue;
 	border-radius: 16px;
-	
 	font-family: Arial Black;
 	color:white;
 	transition-duration: 0.4s;
@@ -112,16 +100,12 @@ img{
 #results{
 	position:absolute;
 	margin-left:1050px;
-	
-	margin-top: 10px;
+	margin-top: 65px;
 	padding: 4px;
 	font-family: Trebuchet MS;
 	font-weight: bold;
 	font-size: 20px;
 	color: darkgreen;
-	border-radius: 16px;
-	border: 3px solid green;
-	
 }
 #instructions{
 	display:flex;
@@ -129,8 +113,8 @@ img{
 	font-weight: bold;
 	font-size: 15px;
 	color: white;
-	background-color:green;
-	border: 3px solid green;
+	background-color:gray;
+	border: 3px solid gray;
 	padding: 4px;
 	border-radius: 16px;
 	margin-left:1050px;
@@ -141,12 +125,21 @@ margin-top:0px;}
 	font-weight: bold;
 	font-size: 18px;
 	color: white;
-	background-color:green;
-	border: 3px solid green;
+	background-color:gray;
+	border: 3px solid gray;
 	padding: 4px;
 	border-radius: 16px;
 	margin-left:1050px;
 	margin-top:-50px;
 }
-
-	
+#startlocation{
+	position:absolute;
+	margin-left:1050px;
+	margin-top:10px;
+	font-family: Trebuchet MS;
+}
+#endlocation{
+	position:absolute;
+	margin-left:1050px;
+	font-family: Trebuchet MS;
+}	
