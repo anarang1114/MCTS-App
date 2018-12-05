@@ -274,6 +274,13 @@ function compileRoutes(){
 	Fourteen_South();
 	Fifteen_North();
 	Fifteen_South();
+	Seventeen_East();
+	Seventeen_West();
+	Nineteen_North();
+	Nineteen_South();
+	Twenty_One_East();
+	Twenty_One_West();
+	alert(allStops.gol);
 	
 }
 
@@ -566,6 +573,80 @@ function receive15North(result){
 		myStop += result["bustime-response"].stops[i].lon + ":";
 		allStops.push(myStop);
 		myStop = "15:north:";
+	}	
+}
+function receive17East(result){
+		var stops = result["bustime-response"].stops;
+	var myStop = "17:east:"; 
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		myStop = "17:east:";
+	}	
+}
+
+function receive17West(result){
+		var stops = result["bustime-response"].stops;
+	var myStop = "17:west:"; 
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		myStop = "17:west:";
+	}	
+}
+function receive19North(result){
+	var stops = result["bustime-response"].stops;
+	var myStop = "19:north:"; 
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		myStop = "19:north:";
+	}	
+}
+function receive19South(result){
+	var stops = result["bustime-response"].stops;
+	var myStop = "19:south:"; 
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		myStop = "19:south:";
+	}	
+}
+function receive21East(result){
+		var stops = result["bustime-response"].stops;
+	var myStop = "21:east:"; 
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		myStop = "21:east:";
+	}	
+}
+
+function receive21West(result){
+		var stops = result["bustime-response"].stops;
+	var myStop = "21:west:"; 
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		myStop = "21:west:";
 	}	
 }
 //Get Blue Lines
@@ -919,6 +1000,90 @@ function Fifteen_North(){
 		"x-requested-with": "xhr"
 	},
 	    "success": receive15North,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Seventeen_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=17&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive17East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Seventeen_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=17&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive17West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Nineteen_North(){
+		var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=19&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive19North,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Nineteen_South(){
+		var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=19&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive19South,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Twenty_One_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=21&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive21East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Twenty_One_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=21&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive21West,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
