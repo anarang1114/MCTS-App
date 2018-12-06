@@ -3,6 +3,7 @@ startlat=0;
 startlng=0;
 endlat= 0;
 endlng=0;
+busroutedistance = new Array();
 startaddressdefined = false;
 endaddressdefined=false;
 startend = new Array();
@@ -22,7 +23,7 @@ function setup(){
 	$('#getbestroute').click(findbestroute);
 	$('#RemoveAddress').click(clearaddressstartend);
 	$('#instructions').hide();
-	compileRoutes();
+	//compileRoutes();
 }
 
 
@@ -167,6 +168,7 @@ function placeaddress(){
 		$("#endlocation").css("font-size","18px");
 		
 	}
+	
 }
 
 function clearaddressstartend(){
@@ -194,7 +196,7 @@ function findbestroute(){
 		alert("No start location and end location selected");
 	}
 	else{
-
+	finder();
 	var mymap = document.getElementById("map");
 	mymap.parentNode.removeChild(mymap);
 	mymap.remove();
@@ -243,11 +245,172 @@ map.addLayer(MQ.routing.routeLayer({
 $("#results").css("border-radius", "16px");
 $("#results").css("border","3px solid green");
 }
+function finder(){
+	
+	busroutedistance.push(["BLU"],[distanceblu()]);
+	busroutedistance.push(["GOL"],[distancegol()]);
+	busroutedistance.push(["GRE"],[distancegre()]);
+	busroutedistance.push(["RED"],[distancered()]);
+	busroutedistance.push(["RR1"],[distancerr1()]);
+	busroutedistance.push(["RR2"],[distancerr2()]);
+	busroutedistance.push(["RR3"],[distancerr3()]);
+	busroutedistance.push(["6"],[distance6()]);
+	busroutedistance.push(["12"],[distance12()]);
+	busroutedistance.push(["14"],[distance14()]);
+	//alert(busroutedistance[0]);
+	console.log(busroutedistance);
+	
+}
+function distanceblu(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[43.138507947467, -88.045287000002],[43.038841951639, -87.921516999999]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
 
+return distance;
+}
+function distancegre(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[43.017001952562, -87.911104999999],[43.038347951659,-87.908912]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
 
+return distance;
+}
+function distancegol(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[43.044674951391,-88.02073],[43.038657951647,-87.909292999999]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;
+}
+function distancepur(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[42.976717954279,-87.948252000001],[43.10433594889,-87.94615]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;}
+function distancered(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[43.087152949606,-88.070225000002],[43.079069949945,-87.882732999999]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;}
+function distancerr1(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+var line = turf.lineString([[43.010142952853,-87.925522000001],[42.997427953394,-87.936521999999]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;}
+function distancerr2(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[42.970471954546,-87.93881],[42.98860695377,-87.945692]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;}
+function distancerr3(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[43.010142952853,-87.925522000001],[43.038841951639, -87.921516999999]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;}
+function distance6(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[42.993192953574,-88.119371999998],[42.991022953668,-88.109565000001]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;}
+function distance12(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[43.050039951167, -87.927143],[43.03880995164,-87.920547000002]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;}
+function distance14(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[43.030639951985, -87.933088000001],[43.038746951641,-87.908928000001]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;
+function distance15(){
+	
+    
+    var pointstart = turf.point([startlat, startlng]);
+	var pointend = turf.point([endlat,endlng]);
+	var line = turf.lineString([[43.030639951985, -87.933088000001],[43.038746951641,-87.908928000001]]);
+	var fromstart = turf.pointToLineDistance(pointstart, line, {units: 'miles'});
+	var fromend = turf.pointToLineDistance(pointend, line, {units:'miles'});
+	
+	var distance=fromstart+fromend;
+
+return distance;
 //ROUTE INFORMATION
 
-
+}
 
 function compileRoutes(){
 	bluNorth();
@@ -280,7 +443,21 @@ function compileRoutes(){
 	Nineteen_South();
 	Twenty_One_East();
 	Twenty_One_West();
-	alert(allStops.gol);
+	Twenty_Two_East();
+	Twenty_Two_West();
+	
+	/*
+	Twenty_Three_North();
+	Twenty_Three_South();
+	Twenty_Seven_North();
+	Twenty_Seven_South();
+	Twenty_Eight_North();
+	Twenty_Eight_South();
+	Thirty_East();
+	Thirty_West();
+	*/
+	alert(allStops);
+	console.log(allStops);
 	
 }
 
@@ -638,7 +815,7 @@ function receive21East(result){
 }
 
 function receive21West(result){
-		var stops = result["bustime-response"].stops;
+	var stops = result["bustime-response"].stops;
 	var myStop = "21:west:"; 
 	for(i in stops){
 		myStop += result["bustime-response"].stops[i].stpid + ":";
@@ -647,6 +824,31 @@ function receive21West(result){
 		myStop += result["bustime-response"].stops[i].lon + ":";
 		allStops.push(myStop);
 		myStop = "21:west:";
+	}	
+}
+function receive22East(result){
+		var stops = result["bustime-response"].stops;
+	var myStop = "22:east:"; 
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		myStop = "21:east:";
+	}	
+}
+
+function receive22West(result){
+	var stops = result["bustime-response"].stops;
+	var myStop = "22:west:"; 
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		myStop = "22:west:";
 	}	
 }
 //Get Blue Lines
@@ -1084,6 +1286,34 @@ function Twenty_One_West(){
 		"x-requested-with": "xhr"
 	},
 	    "success": receive21West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Twenty_Two_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=22&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Twenty_Two_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=22&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
