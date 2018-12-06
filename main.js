@@ -256,7 +256,16 @@ function finder(){
 	busroutedistance.push(["RR3"],[distancerr3()]);
 	busroutedistance.push(["6"],[distance6()]);
 	busroutedistance.push(["12"],[distance12()]);
+	/*
+	busroutedistance.push(["15"],[distance15()]);
+	busroutedistance.push(["17"],[distance17()]);
+	busroutedistance.push(["19"],[distance19()]);
+	busroutedistance.push(["21"],[distance21()]);
+	busroutedistance.push(["22"],[distance22()]);
+	busroutedistance.push([""],[distance14()]);
 	busroutedistance.push(["14"],[distance14()]);
+	busroutedistance.push(["14"],[distance14()]);
+	*/
 	//alert(busroutedistance[0]);
 	console.log(busroutedistance);
 	
@@ -395,7 +404,8 @@ function distance14(){
 	
 	var distance=fromstart+fromend;
 
-return distance;
+return distance;}
+//Start from here
 function distance15(){
 	
     
