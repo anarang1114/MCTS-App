@@ -3,6 +3,8 @@ startlat=0;
 startlng=0;
 endlat= 0;
 endlng=0;
+minimumdistance=0;
+minimumlocation=0;
 busroutedistance = new Array();
 startaddressdefined = false;
 endaddressdefined=false;
@@ -189,7 +191,20 @@ function clearaddressstartend(){
 	
 }
 
-
+function findminimum(){
+	var min=busroutedistance[1];
+	var minlocation =0;
+	for(var i =1; i<busroutedistance.length; i+=2){
+		if(min>busroutedistance[i]){
+			min=busroutedistance[i];
+			minlocation=i;
+		}
+	
+	}
+	minimumdistance=min;
+	minimumlocation=minlocation;
+	
+}
 
 function findbestroute(){
 	if(!startlat || !startlng || !endlat || !endlng){
@@ -197,50 +212,61 @@ function findbestroute(){
 	}
 	else{
 	finder();
-	var mymap = document.getElementById("map");
-	mymap.parentNode.removeChild(mymap);
-	mymap.remove();
-	$("<div/>").attr('id','map').appendTo('body');
-	var map,
-dir;
+	findminimum();
+	console.log(minimumlocation);
+	console.log(minimumdistance);
+		var from = turf.point([startlat, startlng]);
+		var to = turf.point([endlat, endlng]);
+		var options = {units: 'miles'};
 
-map = L.map('map', {
-    layers: MQ.mapLayer(),
-    center: [ startlat, startlng],
-    zoom: 9
-});
+		var distance = turf.distance(from, to, options);
+	if(distance<minimumdistance){
+			var mymap = document.getElementById("map");
+			mymap.parentNode.removeChild(mymap);
+			mymap.remove();
+			$("<div/>").attr('id','map').appendTo('body');
+			var map,
+			dir;
 
-dir = MQ.routing.directions()
-    .on('success', function(data) {
-        var legs = data.route.legs,
-            html = '',
-            maneuvers,
-			finalhtml = '',
-            i;
+				map = L.map('map', {
+					layers: MQ.mapLayer(),
+					center: [ startlat, startlng],
+					zoom: 9
+				});
 
-        if (legs && legs.length) {
-            maneuvers = legs[0].maneuvers;
+				dir = MQ.routing.directions()
+					.on('success', function(data) {
+						var legs = data.route.legs,
+							html = '',
+							maneuvers,
+							finalhtml = '',
+							i;
 
-            for (i=0; i < maneuvers.length; i++) {
+						if (legs && legs.length) {
+							maneuvers = legs[0].maneuvers;
 
-				finalhtml +='<br>'+(i+1) +'. ' +maneuvers[i].narrative+'</br>';
-            }
-				L.DomUtil.get('results').innerHTML = finalhtml;
+							for (i=0; i < maneuvers.length; i++) {
 
-        }
-    });
+								finalhtml +='<br>'+(i+1) +'. ' +maneuvers[i].narrative+'</br>';
+							}
+								L.DomUtil.get('results').innerHTML = finalhtml;
 
-dir.optimizedRoute({
-    locations: [
-        { latLng: { lat: startlat, lng: startlng }},
-        { latLng: { lat: endlat, lng: endlng }}
-    ]
-});
+						}
+					});
 
-map.addLayer(MQ.routing.routeLayer({
-    directions: dir,
-    fitBounds: true
-}));
+				dir.optimizedRoute({
+					locations: [
+						{ latLng: { lat: startlat, lng: startlng }},
+						{ latLng: { lat: endlat, lng: endlng }}
+					]
+				});
+
+				map.addLayer(MQ.routing.routeLayer({
+					directions: dir,
+					fitBounds: true
+				}));
+	}
+
 	}
 $("#results").css("border-radius", "16px");
 $("#results").css("border","3px solid green");
@@ -307,7 +333,7 @@ function finder(){
 	busroutedistance.push("276",distance276());
 	//alert(busroutedistance[0]);
 	console.log(busroutedistance);
-	console.log(busroutedistance[0]);
+	console.log(busroutedistance[1]);
 	
 }
 function distanceblu(){
@@ -445,7 +471,7 @@ function distance14(){
 	var distance=fromstart+fromend;
 
 return distance;}
-//Start from here
+
 function distance15(){
 	
     
@@ -880,7 +906,7 @@ function distance55(){
 return distance;
 
 }
-///////////////////////////////////////////////////////////////////////HERE
+
 function distance56(){
 	
     
@@ -1214,7 +1240,28 @@ function compileRoutes(){
 	console.log(allStops);
 	
 }
+function recievedirection1(result){
+	var stops = result["bustime-response"].stops;
 
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		
+}}
+function recievedirection2(result){
+	var stops = result["bustime-response"].stops;
+	
+	for(i in stops){
+		myStop += result["bustime-response"].stops[i].stpid + ":";
+		myStop += result["bustime-response"].stops[i].stpnm + ":";
+		myStop += result["bustime-response"].stops[i].lat + ":";
+		myStop += result["bustime-response"].stops[i].lon + ":";
+		allStops.push(myStop);
+		
+}}
 function receiveBluNorth(result){
 	var stops = result["bustime-response"].stops;
 	var myStop = "blu:north:"; 
@@ -2096,6 +2143,1128 @@ function Twenty_Three_South(){
 		"x-requested-with": "xhr"
 	},
 	    "success": receive23South,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Twenty_Seven_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=27&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23North,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Twenty_Seven_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=27&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23South,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Twenty_Eight_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=28&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23North,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Twenty_Eight_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=28&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23South,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Thirty_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=30&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Thrity_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=30&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Thirty_X_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=30X&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Thrity_X_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=30X&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Thirty_One_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=31&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Thrity_One_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=31&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+  function Thirty_Three_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=33&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Thrity_Three_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=33&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+function Thirty_Five_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=35&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23North,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Thirty_Five_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=35&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23South,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=40&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23North,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=40&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23South,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_U_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=40U&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23North,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_U_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=40U&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23South,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_Two_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=42&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23North,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_Two_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=42&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive23South,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+  function Fourty_Three_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=43&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_Three_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=43&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+  function Fourty_Four_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=44&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_Fout_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=44&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+  function Fourty_Four_U_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=44U&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_Fout_U_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=44U&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+  function Fourty_Six_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=46&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_Six_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=46&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+  function Fourty_Eight_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=48&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_Eight_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=48&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+  function Fourty_Nine_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=49&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_Nine_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=49&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+  function Fourty_Nine_U_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=49U&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fourty_Nine_U_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=49U&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Fifty_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=50&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fifty_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=50&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Fifty_One_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=51&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fifty_One_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=51&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Fifty_Two_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=52&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fifty_Two_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=52&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Fifty_Three_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=53&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fifty_Three_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=53&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+function Fifty_Four_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=54&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Fifty_Four_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=54&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fifty_Five_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=55&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Fifty_Five_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=55&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fifty_Six_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=56&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Fifty_Six_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=56&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Fifty_Seven_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=57&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Fifty_Seven_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=57&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Sixty_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=60&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Sixty_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=60&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Sixty_One_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=61&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+function Sixty_One_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=61&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Sixty_Three_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=63&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Sixty_Three_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=63&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Sixty_Four_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=64&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Sixty_Four_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=64&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Sixty_Seven_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=67&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Sixty_Seven_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=67&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Seventy_Six_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=76&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Seventy_Six_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=76&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Seventy_Nine_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=79&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Seventy_Nine_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=79&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Eighty_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=80&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Eighty_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=80&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+function Eighty_Five_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=85&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function Eighty_Five_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=85&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Eighty_Seven_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=87&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Eighty_Seven_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=87&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Eighty_Eight_Counter(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=88&dir=CCW&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Eighty_Nine_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=89&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Eighty_Nine_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=89&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function One_Hundred_Thirty_Seven_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=137&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function One_Hundred_Thirty_Seven_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=137&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function One_Hundred_Fourty_Three_North(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=143&dir=NORTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+function One_Hundred_Fourty_Three_South(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=143&dir=SOUTH&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22West,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+});}
+ function Two_Hundred_Nineteen_Counter(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=219&dir=CLOCKWISE&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Two_Hundred_Twenty_Three_East(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=223&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Two_Hundred_Twenty_Three_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=223&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Two_Hundred_Seventy_Six_Eastt(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=276&dir=EAST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
+    "error": function(x){alert("Error!"+JSON.stringify(x));},
+  });
+}
+ function Two_Hundred_Seventy_Six_West(){
+	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=276&dir=WEST&format=json";
+	$.ajax(
+  {  
+    "url":url,
+	"method": "GET",
+    "dataType": "json",
+	headers:{
+		"x-requested-with": "xhr"
+	},
+	    "success": receive22East,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
