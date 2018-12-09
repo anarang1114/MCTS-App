@@ -142,4 +142,20 @@ margin-top:0px;}
 	position:absolute;
 	margin-left:1050px;
 	font-family: Trebuchet MS;
-}	
+}
+#bustable{
+	margin-left:1050px;
+	margin-top:60px;
+	width:40%;
+	
+}
+#route_number{
+	margin-left:1050px;
+	margin-top:60px;
+	font-family: Trebuchet MS;
+	font-size:20px;
+	color:white;
+	border-radius:16px;
+	background-color:green;
+	
+}

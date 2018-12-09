@@ -215,6 +215,9 @@ function findbestroute(){
 	findminimum();
 	console.log(minimumlocation);
 	console.log(minimumdistance);
+	console.log(busroutedistance[minimumlocation-1]);
+	
+	
 		var from = turf.point([startlat, startlng]);
 		var to = turf.point([endlat, endlng]);
 		var options = {units: 'miles'};
@@ -265,11 +268,17 @@ function findbestroute(){
 					directions: dir,
 					fitBounds: true
 				}));
+				$("#results").css("border-radius", "16px");
+				$("#results").css("border","3px solid green");
+	}
+	else{
+		var busroutenumber = busroutedistance[minimumlocation-1];
+		populateStops(busroutenumber);
+		//alert(typeof busroutenumber);
 	}
 
 	}
-$("#results").css("border-radius", "16px");
-$("#results").css("border","3px solid green");
+
 }
 function finder(){
 	
@@ -333,7 +342,7 @@ function finder(){
 	busroutedistance.push("276",distance276());
 	//alert(busroutedistance[0]);
 	console.log(busroutedistance);
-	console.log(busroutedistance[1]);
+	//console.log(busroutedistance[1]);
 	
 }
 function distanceblu(){
@@ -1191,7 +1200,7 @@ function distance276(){
 return distance;
 
 
-}
+}/*
 function compileRoutes(){
 	bluNorth();
 	bluSouth();
@@ -1226,7 +1235,7 @@ function compileRoutes(){
 	Twenty_Two_East();
 	Twenty_Two_West();
 	
-	/*
+	
 	Twenty_Three_North();
 	Twenty_Three_South();
 	Twenty_Seven_North();
@@ -1235,23 +1244,53 @@ function compileRoutes(){
 	Twenty_Eight_South();
 	Thirty_East();
 	Thirty_West();
-	*/
+	
 	alert(allStops);
 	console.log(allStops);
 	
-}
-function recievedirection1(result){
+}*/
+function receivedirection1(result){
+	$("#route_number").html("Route Number:" +busroutedistance[minimumlocation-1]);
+	var allStops = new Array();
+	//var stops = result["bustime-response"].stops;
+	$("#bustable").html(result["bustime-response"].stops[0].stpnm);
 	var stops = result["bustime-response"].stops;
 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		
-}}
-function recievedirection2(result){
+	
+	$("#bustable").html("");
+        var table_data="";
+        var the_table = $("<table />").attr("id","bus_route_result");
+		var header = "<tr><th> Stop ID </th><th> Stop Name </th></tr>";
+	for(var i =0,t=1; i<result.length; i++,t+=2){
+		table_data+=result["bustime-response"].stops[i].stpid;
+	}
+	 //the_table.append(header);
+      //  the_table.append(table_data);
+       // $('#bustable').append(the_table);
+	 $('#bustable').html(table_data);
+	/*for(var t=0; t<result.length; t++){
+		stops.push(result["bustime-response"].stops[t].stpid);
+	}
+	console.log(stops);
+	//alert(stops["bustime-response"].stops[0].stpid);
+	$("#bustable").html("");
+	var route_stops= $("<table/>").attr("id","bus_route_result");
+	var table_data="";
+	var header = "<tr><th> Stop ID </th><th> Stop Name </th></tr>";
+	alert(result["bustime-response"].stops[0].stpid);
+	for(var i =0,t=1; i<result.length; i++,t+=2){
+		table_data+="<tr><td>"+result["bustime-response"].stops[i].stpid+"</td><td>"+result["bustime-response"].stops[t].stpnm+"</td></tr>";
+	}
+	route_stops.append(header);
+	route_stops.append(table_data);
+	$("#bustable").append(route_stops);*/
+	
+
+
+}
+function receivedirection2(result){
+	console.log(result);
+	/*
 	var stops = result["bustime-response"].stops;
 	
 	for(i in stops){
@@ -1261,397 +1300,263 @@ function recievedirection2(result){
 		myStop += result["bustime-response"].stops[i].lon + ":";
 		allStops.push(myStop);
 		
-}}
-function receiveBluNorth(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "blu:north:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "blu:north:";
-	}
-	
+}*/
 }
-function receiveBluSouth(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "blu:south:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "blu:south:";
+function populateStops(color){
+	//var thisLineColor = color[0];
+	var stopsNE = [];
+	var stopsSW = [];
+	switch(color){
+		case "BLU":
+			bluNorth();
+			bluSouth();
+			break;
+			//stopsNE = bluNorthStops;
+			//stopsSW = bluSouthStops;
+ 		case "GOL":
+			golNorth();
+			golSouth();
+			break;
+			//stopsNE = golEastStops;
+			//stopsSW = golWestStops;
+		
+		case "GRE":
+			greNorth();
+			greSouth();
+			break;
+			//stopsNE = greNorthStops;
+			//stopsSW = greSouthStops;
+		
+		case "PUR":
+			purNorth();
+			purSouth();
+			break;
+			//stopsNE = purNorth();
+			//stopsSW = purSouth();
+			
+		case "RED":
+			redEast();
+			redWest();
+			break;
+			//stopsNE = redEast();
+			//stopsSW = redWest();
+		
+		case "RR1":
+			RR1North();
+			RR1South();
+			break;
+		case "RR2":
+			RR2North();
+			RR2South();
+			break;
+		case "RR3":
+			RR3North();
+			RR3South();
+			break;
+		case "6":
+			Six_East();
+			Six_West();
+			break;
+		case "12":
+			Tweleve_East();
+			Tweleve_West();
+			break;
+		case "15":
+			Fifteen_North();
+			Fifteen_South();
+			break;
+		case "17":
+			Seventeen_East();
+			Seventeen_West();
+			break;
+		case "19":
+			Nineteen_North();
+			Nineteen_South();
+			break;
+		case "21":
+			Twenty_One_East();
+			Twenty_One_West();
+			break;
+		case "22":
+			Twenty_Two_East();
+			Twenty_Two_West();
+			break;
+		case "23":
+			Twenty_Three_North();
+			Twenty_Three_South();
+			break;
+		case "27":
+			Twenty_Seven_North();
+			Twenty_Seven_South();
+			break;
+		case "28":
+			Twenty_Eight_North();
+			Twenty_Eight_South();
+			break;			
+		case "30":
+			Thirty_East();
+			Thirty_West();
+			break;
+		case "30X":
+			Thirty_X_East();
+			Thirty_X_West();
+			break;
+		case "31":
+			Thirty_One_East();
+			Thirty_One_West();
+			break;
+		case "33":
+			Thirty_Three_East();
+			Thirty_Three_West();
+			break;
+		case "35":
+			Thirty_Five_North();
+			Thirty_Five_South();
+			break;
+		case "40":
+			Fourty_North();
+			Fourty_South();
+			break;
+		case "40U":
+			Fourty_U_North();
+			Fourty_U_South();
+			break;
+		case "42U":
+			Fourty_Two_U_North();
+			Fourty_Two_U_South();
+			break;
+		case "43":
+			Fourty_Three_East();
+			Fourty_Three_West();
+			break;
+		case "44":
+			Fourty_Four_East();
+			Fourty_Four_West();
+			break;
+		case "44U":
+			Fourty_Four_U_East();
+			Fourty_Four_U_West();
+			break;
+		case "46":
+			Fourty_Six_East();
+			Fourty_Six_West();
+			break;
+		case "48":
+			Fourty_Eight_North();
+			Fourty_Eight_South();
+			break;
+		case "49":
+			Fourty_Nine_North();
+			Fourty_Nine_South();
+			break;
+		case "49U":
+			Fourty_Nine_U_East();
+			Fourty_Nine_U_West();
+			break;
+		case "50":
+			Fifty_East();
+			Fifty_West();
+			break;
+		case "51":
+			Fifty_One_East();
+			Fifty_One_West();
+			break;
+		case "52":
+			Fifty_Two_North();
+			Fifty_Two_South();
+			break;
+		case "53":
+			Fifty_Three_North();
+			Fifty_Three_South();
+			break;
+		case "54":
+			Fifty_Four_East();
+			Fifty_Four_West();
+			break;
+		case "55":
+			Fifty_Five_East();
+			Fifty_Five_West();
+			break;
+		case "56":
+			Fifty_Six_East();
+			Fifty_Six_West();
+			break;
+		case "57":
+			Fifty_Seven_East();
+			Fifty_Seven_West();
+			break;
+		case "60":
+			Sixty_East();
+			Sixty_West();
+			break;
+		case "61":
+			Sixty_One_East();
+			Sixty_One_West();
+			break;
+		case "63":
+			Sixty_Three_East();
+			Sixty_Three_West();
+			break;
+		case "64":
+			Sixty_Four_North();
+			Sixty_Four_South();
+			break;
+		case "67":
+			Sixty_Seven_North();
+			Sixty_Seven_South();
+			break;
+		case "76":
+			Seventy_Six_North();
+			Seventy_Six_South();
+			break;
+		case "79":
+			Seventy_Nine_East();
+			Seventy_Nine_West();
+			break;
+		case "80":
+			Eighty_North();
+			Eighty_South();
+			break;
+		case "85":
+			Eighty_Five_North();
+			Eighty_Five_South();
+			break;
+		case "87":
+			Eighty_Seven_East();
+			Eighty_Seven_West();
+			break;
+		case "88":
+			Eighty_Eight_Counter();
+			break;
+		case "89":
+			Eighty_Nine_East();
+			Eighty_Nine_West();
+			break;
+		case "137":
+			One_Hundred_Thirty_Seven_East();
+			One_Hundred_Thirty_Seven_West();
+			break;
+		case "143":
+			One_Hundred_Fourty_Three_North();
+			One_Hundred_Fourty_Three_South();
+			break;
+		case "219":
+			Two_Hundred_Nineteen_Counter();
+			break;
+		case "223":
+			Two_Hundred_Twenty_Three_East();
+			Two_Hundred_Twenty_Three_West();
+			break;
+		case "276":
+			Two_Hundred_Seventy_Six_East();
+			Two_Hundred_Seventy_Six_West();
+			break;
+			
+			
+			
 	}
 }
 
-function receiveGolEast(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "gol:east:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "gol:east:";
-	}
-}
-function receiveGolWest(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "gol:west:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "gol:west:";
-	}
-}
-
-function receiveGreNorth(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "gre:north:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "gre:north:";
-	}
-}
-
-function receiveGreSouth(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "gre:south:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "gre:south:";
-	}
-}
-function receivePurNorth(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "pur:north:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "pur:north:";
-	}
-}
-function receivePurSouth(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "pur:south:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "pur:south:";
-	}	
-}
-function receiveRedEast(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "red:east:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "red:east:";
-	}	
-}
-function receiveRedWest(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "red:west:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "red:west:";
-	}	
-}
-function receiveRR1North(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "rr1:north:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "rr1:north:";
-	}	
-}
-function receiveRR1South(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "rr1:south:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "rr1:south:";
-	}	
-}
-function receiveRR2North(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "rr2:north:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "rr2:north:";
-	}	
-}
-function receiveRR2South(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "rr2:south:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "rr2:south:";
-	}	
-}function receiveRR3North(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "rr3:north:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "rr3:north:";
-	}	
-}
-function receiveRR3South(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "rr3:south:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "rr3:south:";
-	}	
-}
-function receive6East(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "6:east:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "6:east:";
-	}	
-}
-function receive6West(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "6:west:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "6:west:";
-	}	
-}
-function receive12East(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "12:east:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "12:east:";
-	}	
-}
-function receive12West(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "12:west:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "12:west:";
-	}	
-}  
-function receive14North(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "14:north:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "14:north:";
-	}	
-}
-function receive14South(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "14:south:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "14:south:";
-	}	
-}
-function receive15South(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "15:south:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "15:south:";
-	}	
-}
-function receive15North(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "15:north:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "15:north:";
-	}	
-}
-function receive17East(result){
-		var stops = result["bustime-response"].stops;
-	var myStop = "17:east:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "17:east:";
-	}	
-}
-
-function receive17West(result){
-		var stops = result["bustime-response"].stops;
-	var myStop = "17:west:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "17:west:";
-	}	
-}
-function receive19North(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "19:north:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "19:north:";
-	}	
-}
-function receive19South(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "19:south:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "19:south:";
-	}	
-}
-function receive21East(result){
-		var stops = result["bustime-response"].stops;
-	var myStop = "21:east:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "21:east:";
-	}	
-}
-
-function receive21West(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "21:west:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "21:west:";
-	}	
-}
-function receive22East(result){
-		var stops = result["bustime-response"].stops;
-	var myStop = "22:east:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "21:east:";
-	}	
-}
-
-function receive22West(result){
-	var stops = result["bustime-response"].stops;
-	var myStop = "22:west:"; 
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
-		myStop = "22:west:";
-	}	
-}
 //Get Blue Lines
 function bluNorth(){
 	var url = 'https://cors-anywhere.herokuapp.com/'+ "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=BLU&dir=NORTH&format=json";
@@ -1663,7 +1568,7 @@ function bluNorth(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	"success": receiveBluNorth,
+	"success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1678,7 +1583,7 @@ function bluSouth(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveBluSouth,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1694,7 +1599,7 @@ function bluSouth(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveGolEast,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1709,7 +1614,7 @@ function golWest(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveGolWest,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1725,7 +1630,7 @@ function golWest(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveGreNorth,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1740,7 +1645,7 @@ function greSouth(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveGreSouth,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }  
@@ -1755,7 +1660,7 @@ function purNorth(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receivePurNorth,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1769,7 +1674,7 @@ function purSouth(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receivePurSouth,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 } 
@@ -1784,7 +1689,7 @@ function purSouth(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveRedEast,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1798,7 +1703,7 @@ function redWest(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveRedWest,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1813,7 +1718,7 @@ function RR1North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveRR1North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1828,7 +1733,7 @@ function RR1South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveRR1South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1843,7 +1748,7 @@ function RR2North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveRR2North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1858,7 +1763,7 @@ function RR2South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveRR2South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1873,7 +1778,7 @@ function RR3North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveRR3North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1888,7 +1793,7 @@ function RR3South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receiveRR3South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1903,7 +1808,7 @@ function Six_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive6East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1917,7 +1822,7 @@ function Six_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive6West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1931,7 +1836,7 @@ function Tweleve_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive12East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1945,7 +1850,7 @@ function Tweleve_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive12West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1959,7 +1864,7 @@ function Fourteen_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive14South,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1974,7 +1879,7 @@ function Fourteen_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive14North,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -1988,7 +1893,7 @@ function Fifteen_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive15South,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2002,7 +1907,7 @@ function Fifteen_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive15North,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2016,7 +1921,7 @@ function Seventeen_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive17East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2030,7 +1935,7 @@ function Seventeen_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive17West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2044,7 +1949,7 @@ function Nineteen_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive19North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2058,7 +1963,7 @@ function Nineteen_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive19South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2072,7 +1977,7 @@ function Twenty_One_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive21East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2086,7 +1991,7 @@ function Twenty_One_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive21West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2100,7 +2005,7 @@ function Twenty_Two_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2114,7 +2019,7 @@ function Twenty_Two_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2128,7 +2033,7 @@ function Twenty_Three_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2142,7 +2047,7 @@ function Twenty_Three_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2156,7 +2061,7 @@ function Twenty_Seven_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2170,7 +2075,7 @@ function Twenty_Seven_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2184,7 +2089,7 @@ function Twenty_Eight_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2198,7 +2103,7 @@ function Twenty_Eight_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2212,7 +2117,7 @@ function Thirty_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2226,7 +2131,7 @@ function Thrity_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2240,11 +2145,11 @@ function Thirty_X_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
-function Thrity_X_West(){
+function Thirty_X_West(){
 	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=30X&dir=WEST&format=json";
 	$.ajax(
   {  
@@ -2254,7 +2159,7 @@ function Thrity_X_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2268,11 +2173,11 @@ function Thirty_One_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
-function Thrity_One_West(){
+function Thirty_One_West(){
 	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=31&dir=WEST&format=json";
 	$.ajax(
   {  
@@ -2282,10 +2187,10 @@ function Thrity_One_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
-  function Thirty_Three_East(){
+function Thirty_Three_East(){
 	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=33&dir=EAST&format=json";
 	$.ajax(
   {  
@@ -2295,11 +2200,11 @@ function Thrity_One_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
-function Thrity_Three_West(){
+function Thirty_Three_West(){
 	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=33&dir=WEST&format=json";
 	$.ajax(
   {  
@@ -2309,7 +2214,7 @@ function Thrity_Three_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
 function Thirty_Five_North(){
@@ -2322,7 +2227,7 @@ function Thirty_Five_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2336,7 +2241,7 @@ function Thirty_Five_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2350,7 +2255,7 @@ function Fourty_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2364,7 +2269,7 @@ function Fourty_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23South,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2378,7 +2283,7 @@ function Fourty_U_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2392,11 +2297,11 @@ function Fourty_U_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
-function Fourty_Two_North(){
+function Fourty_Two_U_North(){
 	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=42&dir=NORTH&format=json";
 	$.ajax(
   {  
@@ -2406,11 +2311,11 @@ function Fourty_Two_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23North,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
-function Fourty_Two_South(){
+function Fourty_Two_U_South(){
 	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=42&dir=SOUTH&format=json";
 	$.ajax(
   {  
@@ -2420,7 +2325,7 @@ function Fourty_Two_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive23South,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2434,7 +2339,7 @@ function Fourty_Two_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2448,7 +2353,7 @@ function Fourty_Three_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
   function Fourty_Four_East(){
@@ -2461,11 +2366,11 @@ function Fourty_Three_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
-function Fourty_Fout_West(){
+function Fourty_Four_West(){
 	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=44&dir=WEST&format=json";
 	$.ajax(
   {  
@@ -2475,7 +2380,7 @@ function Fourty_Fout_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
   function Fourty_Four_U_East(){
@@ -2488,11 +2393,11 @@ function Fourty_Fout_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
-function Fourty_Fout_U_West(){
+function Fourty_Four_U_West(){
 	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=44U&dir=WEST&format=json";
 	$.ajax(
   {  
@@ -2502,7 +2407,7 @@ function Fourty_Fout_U_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
   function Fourty_Six_East(){
@@ -2515,7 +2420,7 @@ function Fourty_Fout_U_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2529,7 +2434,7 @@ function Fourty_Six_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
   function Fourty_Eight_North(){
@@ -2542,7 +2447,7 @@ function Fourty_Six_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2556,7 +2461,7 @@ function Fourty_Eight_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
   function Fourty_Nine_North(){
@@ -2569,7 +2474,7 @@ function Fourty_Eight_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2583,7 +2488,7 @@ function Fourty_Nine_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
   function Fourty_Nine_U_East(){
@@ -2596,7 +2501,7 @@ function Fourty_Nine_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2610,7 +2515,7 @@ function Fourty_Nine_U_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Fifty_East(){
@@ -2623,7 +2528,7 @@ function Fourty_Nine_U_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2637,7 +2542,7 @@ function Fifty_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Fifty_One_East(){
@@ -2650,7 +2555,7 @@ function Fifty_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2664,7 +2569,7 @@ function Fifty_One_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Fifty_Two_North(){
@@ -2677,7 +2582,7 @@ function Fifty_One_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2691,7 +2596,7 @@ function Fifty_Two_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Fifty_Three_North(){
@@ -2704,7 +2609,7 @@ function Fifty_Two_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2718,7 +2623,7 @@ function Fifty_Three_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
 function Fifty_Four_West(){
@@ -2731,7 +2636,7 @@ function Fifty_Four_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Fifty_Four_East(){
@@ -2744,7 +2649,7 @@ function Fifty_Four_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2758,7 +2663,7 @@ function Fifty_Five_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Fifty_Five_East(){
@@ -2771,7 +2676,7 @@ function Fifty_Five_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2785,7 +2690,7 @@ function Fifty_Six_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Fifty_Six_East(){
@@ -2798,7 +2703,7 @@ function Fifty_Six_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2812,7 +2717,7 @@ function Fifty_Seven_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Fifty_Seven_East(){
@@ -2825,7 +2730,7 @@ function Fifty_Seven_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2839,7 +2744,7 @@ function Sixty_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Sixty_East(){
@@ -2852,7 +2757,7 @@ function Sixty_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2866,7 +2771,7 @@ function Sixty_One_West(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
 function Sixty_One_East(){
@@ -2879,7 +2784,7 @@ function Sixty_One_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Sixty_Three_East(){
@@ -2892,7 +2797,7 @@ function Sixty_One_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2906,7 +2811,7 @@ function Sixty_One_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2920,7 +2825,7 @@ function Sixty_One_East(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2934,7 +2839,7 @@ function Sixty_Four_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Sixty_Seven_North(){
@@ -2947,7 +2852,7 @@ function Sixty_Four_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2961,7 +2866,7 @@ function Sixty_Seven_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Seventy_Six_North(){
@@ -2974,7 +2879,7 @@ function Sixty_Seven_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -2988,7 +2893,7 @@ function Seventy_Six_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Seventy_Nine_East(){
@@ -3001,7 +2906,7 @@ function Seventy_Six_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3015,7 +2920,7 @@ function Seventy_Six_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3029,7 +2934,7 @@ function Eighty_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3043,7 +2948,7 @@ function Eighty_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
 function Eighty_Five_North(){
@@ -3056,7 +2961,7 @@ function Eighty_Five_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3070,7 +2975,7 @@ function Eighty_Five_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Eighty_Seven_East(){
@@ -3083,7 +2988,7 @@ function Eighty_Five_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3097,7 +3002,7 @@ function Eighty_Five_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3111,7 +3016,7 @@ function Eighty_Five_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3125,7 +3030,7 @@ function Eighty_Five_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3139,7 +3044,7 @@ function Eighty_Five_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3153,7 +3058,7 @@ function Eighty_Five_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3167,7 +3072,7 @@ function Eighty_Five_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3181,7 +3086,7 @@ function One_Hundred_Fourty_Three_North(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3195,7 +3100,7 @@ function One_Hundred_Fourty_Three_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22West,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
 });}
  function Two_Hundred_Nineteen_Counter(){
@@ -3208,7 +3113,7 @@ function One_Hundred_Fourty_Three_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3222,7 +3127,7 @@ function One_Hundred_Fourty_Three_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3236,11 +3141,11 @@ function One_Hundred_Fourty_Three_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
- function Two_Hundred_Seventy_Six_Eastt(){
+ function Two_Hundred_Seventy_Six_East(){
 	var url = 'https://cors-anywhere.herokuapp.com/' + "http://realtime.ridemcts.com/bustime/api/v3/getstops?key=uSb3vFN6m4gKwnXzipg2RmwgM&rt=276&dir=EAST&format=json";
 	$.ajax(
   {  
@@ -3250,7 +3155,7 @@ function One_Hundred_Fourty_Three_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection1,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
@@ -3264,7 +3169,7 @@ function One_Hundred_Fourty_Three_South(){
 	headers:{
 		"x-requested-with": "xhr"
 	},
-	    "success": receive22East,
+	    "success": receivedirection2,
     "error": function(x){alert("Error!"+JSON.stringify(x));},
   });
 }
