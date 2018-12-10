@@ -13,7 +13,7 @@ position: absolute;
 }
 #RemoveAddress{ 
 	position: absolute;
-	margin-top:530px;
+	margin-top:500px;
 	margin-left:665px;
 	padding: 24px 6px;
 	background-color:red;
@@ -43,7 +43,7 @@ position: absolute;
 opacity: 0.6;}
 #getbestroute{	
 	position: absolute;
-	margin-top:530px;
+	margin-top:500px;
 	margin-left:475px;
 	padding: 24px 6px;
 	background-color:green;
@@ -67,7 +67,7 @@ img{
 	background-color:black;
 	color:white;
 	
-	margin-top:530px;
+	margin-top:500px;
 	margin-left:10px;
 	
 	border-radius: 16px;
@@ -83,7 +83,7 @@ img{
  }
  #ShowMilwaukeeMap{
 	position: absolute;
-	margin-top:530px;
+	margin-top:500px;
 	font-size: 20px;
 	margin-left:214px;
 	padding: 24px 6px;
@@ -145,17 +145,35 @@ margin-top:0px;}
 }
 #bustable{
 	margin-left:1050px;
-	margin-top:60px;
+	margin-top:50px;
 	width:40%;
+	position:absolute;
+	font-size:20px;
+	color:white;
+	font-family: Trebuchet MS;
+	background-color:green;
+	border-radius:16px;
 	
 }
 #route_number{
 	margin-left:1050px;
-	margin-top:60px;
+	margin-top:58px;
 	font-family: Trebuchet MS;
 	font-size:20px;
 	color:white;
 	border-radius:16px;
-	background-color:green;
+	background-color:blue;
 	
+}
+#close_table{
+	margin-left:1400px;
+	margin-top:-50px;
+	position:absolute;
+	font-family:Trebuchet MS;
+	font-size:20px;
+	border-radius:16px;
+	background-color:gray;
+	border: 3px solid gray;
+	color:white;
+	font-weight: bold;
 }

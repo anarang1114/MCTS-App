@@ -16,7 +16,12 @@ $(document).ready(function(){
 	});
 
 });
+$(document).ready(function(){
+	$('#close_table').click(function(){
+		$('#bustable').slideToggle('slow');
+	});
 
+});
 
 function setup(){
 	
@@ -188,6 +193,11 @@ function clearaddressstartend(){
 	$("#results").css("border-radius", "0px");
 	$("#results").css("border","0px solid green");
 	endaddressdefined=false;
+	$("#route_number").html("");
+	$("#bustable").html("");
+	busroutedistance.length = 0;
+	minimumdistance=0;
+	minimumlocation=0;
 	
 }
 
@@ -213,9 +223,8 @@ function findbestroute(){
 	else{
 	finder();
 	findminimum();
-	console.log(minimumlocation);
-	console.log(minimumdistance);
-	console.log(busroutedistance[minimumlocation-1]);
+	
+	
 	
 	
 		var from = turf.point([startlat, startlng]);
@@ -272,9 +281,11 @@ function findbestroute(){
 				$("#results").css("border","3px solid green");
 	}
 	else{
+		
 		var busroutenumber = busroutedistance[minimumlocation-1];
 		populateStops(busroutenumber);
-		//alert(typeof busroutenumber);
+		
+		
 	}
 
 	}
@@ -340,9 +351,7 @@ function finder(){
 	busroutedistance.push("219",distance219());
 	busroutedistance.push("223",distance223());
 	busroutedistance.push("276",distance276());
-	//alert(busroutedistance[0]);
-	console.log(busroutedistance);
-	//console.log(busroutedistance[1]);
+	
 	
 }
 function distanceblu(){
@@ -1200,108 +1209,30 @@ function distance276(){
 return distance;
 
 
-}/*
-function compileRoutes(){
-	bluNorth();
-	bluSouth();
-	golEast();
-	golWest();
-	greNorth();
-	greSouth();
-	purNorth();
-	purSouth();
-	redEast();
-	redWest();
-	RR1North();
-	RR1South();
-	RR2North();
-	RR2South();
-	RR3North();
-	RR3South();
-	Six_East();
-	Six_West();
-	Tweleve_East();
-	Tweleve_West();
-	Fourteen_North();
-	Fourteen_South();
-	Fifteen_North();
-	Fifteen_South();
-	Seventeen_East();
-	Seventeen_West();
-	Nineteen_North();
-	Nineteen_South();
-	Twenty_One_East();
-	Twenty_One_West();
-	Twenty_Two_East();
-	Twenty_Two_West();
-	
-	
-	Twenty_Three_North();
-	Twenty_Three_South();
-	Twenty_Seven_North();
-	Twenty_Seven_South();
-	Twenty_Eight_North();
-	Twenty_Eight_South();
-	Thirty_East();
-	Thirty_West();
-	
-	alert(allStops);
-	console.log(allStops);
-	
-}*/
+}
+
 function receivedirection1(result){
 	$("#route_number").html("Route Number:" +busroutedistance[minimumlocation-1]);
-	var allStops = new Array();
-	//var stops = result["bustime-response"].stops;
-	$("#bustable").html(result["bustime-response"].stops[0].stpnm);
-	var stops = result["bustime-response"].stops;
-
-	
-	$("#bustable").html("");
-        var table_data="";
-        var the_table = $("<table />").attr("id","bus_route_result");
-		var header = "<tr><th> Stop ID </th><th> Stop Name </th></tr>";
-	for(var i =0,t=1; i<result.length; i++,t+=2){
-		table_data+=result["bustime-response"].stops[i].stpid;
-	}
-	 //the_table.append(header);
-      //  the_table.append(table_data);
-       // $('#bustable').append(the_table);
-	 $('#bustable').html(table_data);
-	/*for(var t=0; t<result.length; t++){
-		stops.push(result["bustime-response"].stops[t].stpid);
-	}
-	console.log(stops);
-	//alert(stops["bustime-response"].stops[0].stpid);
-	$("#bustable").html("");
-	var route_stops= $("<table/>").attr("id","bus_route_result");
-	var table_data="";
-	var header = "<tr><th> Stop ID </th><th> Stop Name </th></tr>";
-	alert(result["bustime-response"].stops[0].stpid);
-	for(var i =0,t=1; i<result.length; i++,t+=2){
-		table_data+="<tr><td>"+result["bustime-response"].stops[i].stpid+"</td><td>"+result["bustime-response"].stops[t].stpnm+"</td></tr>";
-	}
-	route_stops.append(header);
-	route_stops.append(table_data);
-	$("#bustable").append(route_stops);*/
-	
-
-
-}
-function receivedirection2(result){
-	console.log(result);
-	/*
-	var stops = result["bustime-response"].stops;
-	
-	for(i in stops){
-		myStop += result["bustime-response"].stops[i].stpid + ":";
-		myStop += result["bustime-response"].stops[i].stpnm + ":";
-		myStop += result["bustime-response"].stops[i].lat + ":";
-		myStop += result["bustime-response"].stops[i].lon + ":";
-		allStops.push(myStop);
+	$("#bustable").html(""); 
+	var stopm="";
+	var the_data=result["bustime-response"].stops;
+	for(var i in the_data){
 		
-}*/
-}
+		stopm+="<tr><td>"+the_data[i].stpnm+"</td></tr>";
+		$("#bustable").html(stopm);
+	}
+	
+   }
+function receivedirection2(result){
+	
+	var stopm="";
+	var the_data=result["bustime-response"].stops;
+	for(var i in the_data){
+		
+		stopm+="<tr><td>"+the_data[i].stpnm+"</td></tr>";
+		$("#bustable").html(stopm);
+	}
+	}
 function populateStops(color){
 	//var thisLineColor = color[0];
 	var stopsNE = [];
@@ -1311,35 +1242,30 @@ function populateStops(color){
 			bluNorth();
 			bluSouth();
 			break;
-			//stopsNE = bluNorthStops;
-			//stopsSW = bluSouthStops;
+			
  		case "GOL":
 			golNorth();
 			golSouth();
 			break;
-			//stopsNE = golEastStops;
-			//stopsSW = golWestStops;
+			
 		
 		case "GRE":
 			greNorth();
 			greSouth();
 			break;
-			//stopsNE = greNorthStops;
-			//stopsSW = greSouthStops;
+			
 		
 		case "PUR":
 			purNorth();
 			purSouth();
 			break;
-			//stopsNE = purNorth();
-			//stopsSW = purSouth();
+			
 			
 		case "RED":
 			redEast();
 			redWest();
 			break;
-			//stopsNE = redEast();
-			//stopsSW = redWest();
+			
 		
 		case "RR1":
 			RR1North();
