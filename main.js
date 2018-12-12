@@ -30,7 +30,7 @@ function setup(){
 	$('#getbestroute').click(findbestroute);
 	$('#RemoveAddress').click(clearaddressstartend);
 	$('#instructions').hide();
-	//compileRoutes();
+	
 }
 
 
@@ -195,7 +195,7 @@ function clearaddressstartend(){
 	endaddressdefined=false;
 	$("#route_number").html("");
 	$("#bustable").html("");
-	busroutedistance.length = 0;
+	busroutedistance=[];
 	minimumdistance=0;
 	minimumlocation=0;
 	
@@ -279,6 +279,7 @@ function findbestroute(){
 				}));
 				$("#results").css("border-radius", "16px");
 				$("#results").css("border","3px solid green");
+				
 	}
 	else{
 		
